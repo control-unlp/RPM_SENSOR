@@ -1,0 +1,7 @@
+13:16:39 **** Incremental Build of configuration Debug for project RPM_SENSOR ****
+make -j12 all 
+arm-none-eabi-size  RPM_SENSOR.elf 
+   text	   data	    bss	    dec	    hex	filename
+  29448	    384	   6112	  35944	   8c68	RPM_SENSOR.elf
+Finished building: default.size.stdout
+ 
