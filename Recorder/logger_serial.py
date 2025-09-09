@@ -6,20 +6,20 @@ from datetime import datetime
 import serial
 
 # --- CONFIG --- (ajustá estos valores)
-PORT = "COM5"       # tu puerto (ver en Administrador de dispositivos o 'mode' en CMD)
-BAUD = 115200       # igual al del firmware del STM32
+PORT = "COM5"
+BAUD = 9600
 OUTFILE = "log_serial.csv"
 
 def main():
-    # Abrimos archivo en 'append' para ir sumando sesiones
+
     with open(OUTFILE, "a", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        # Encabezado si el archivo está vacío
+
         if f.tell() == 0:
             writer.writerow(["iso_time", "raw_line"])
-        # Abrimos puerto serie
+
         with serial.Serial(PORT, BAUD, timeout=1) as ser:
-            print(f"Grabando desde {PORT} @ {BAUD} → {OUTFILE} (Ctrl+C para cortar)")
+            print(f"Grabando desde {PORT} @ {BAUD} → {OUTFILE} ")
             try:
                 while True:
                     line = ser.readline()  # lee hasta \n
@@ -45,7 +45,6 @@ if __name__ == "__main__":
     if len(sys.argv) >= 3:
         BAUD = int(sys.argv[2])
     main()
-
 
 ## python logger_serial.py           # usa COM5 @115200 (según config del script)
 ## python logger_serial.py COM7 9600 # ejemplo pasando COM y baud por parámetros
