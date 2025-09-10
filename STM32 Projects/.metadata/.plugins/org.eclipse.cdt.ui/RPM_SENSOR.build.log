@@ -1,4 +1,4 @@
-15:56:06 **** Incremental Build of configuration Debug for project RPM_SENSOR ****
+10:03:20 **** Incremental Build of configuration Debug for project RPM_SENSOR ****
 make -j12 all 
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I../USB_DEVICE/App -I../USB_DEVICE/Target -I../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
 arm-none-eabi-g++ -o "RPM_SENSOR.elf" @"objects.list"   -mcpu=cortex-m3 -T"C:\Users\thiag\Documents\STM UNLP\RPM_SENSOR\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="RPM_SENSOR.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
@@ -8,7 +8,7 @@ arm-none-eabi-size  RPM_SENSOR.elf
 arm-none-eabi-objdump -h -S RPM_SENSOR.elf  > "RPM_SENSOR.list"
 arm-none-eabi-objcopy  -O binary RPM_SENSOR.elf  "RPM_SENSOR.bin"
    text	   data	    bss	    dec	    hex	filename
-  51856	    836	   6620	  59312	   e7b0	RPM_SENSOR.elf
+  47256	    836	   6532	  54624	   d560	RPM_SENSOR.elf
 Finished building: default.size.stdout
  
 Finished building: RPM_SENSOR.bin
@@ -16,5 +16,5 @@ Finished building: RPM_SENSOR.bin
 Finished building: RPM_SENSOR.list
  
 
-15:56:08 Build Finished. 0 errors, 0 warnings. (took 2s.45ms)
+10:03:21 Build Finished. 0 errors, 0 warnings. (took 927ms)
 
