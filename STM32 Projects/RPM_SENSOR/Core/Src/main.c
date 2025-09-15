@@ -49,9 +49,15 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+
+volatile uint16_t currentPulse = 1000;
 volatile uint32_t lastTick = 0;
 volatile uint32_t rpm = 0;
-char msg[32];
+char msg[64];
+
+// Valores de descarte
+#define DIFF_MIN_MS 2 		// Intervalo menor a 2 [ms] --> RPM>30k
+#define DIFF_MAX_MS 2000   // Intervalo mayor a 2 [s]
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -63,22 +69,25 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-void PWM_SetDutyCycle(uint8_t duty_percent) {
-    if (duty_percent > 100) duty_percent = 100;            // Limitar a 100%
-    uint32_t ARR = __HAL_TIM_GET_AUTORELOAD(&htim1);       // Obtener ARR actual (1439)
-    // Calcular el nuevo valor de comparación:
-    uint32_t new_pulse = (duty_percent * (ARR + 1)) / 100;
-    if (new_pulse > 0) new_pulse--;  // Ajuste: 100% debe dar CCR = ARR, 0% dará CCR = 0
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, new_pulse);
+
+void PWM_SetPulse_us(uint16_t pulse_us) {
+    // CCR = pulse_us / 1 µs * factor de timer
+    // Si TIM1 está a 72 MHz con prescaler= 71, entonces 1 tick = 1 µs
+    if (pulse_us < 1000) pulse_us = 1000;
+    if (pulse_us > 2000) pulse_us = 2000;
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, pulse_us);
+    currentPulse = pulse_us;
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
     if (GPIO_Pin == GPIO_PIN_0) {  // Verifica que sea nuestro PA0
-        uint32_t now = HAL_GetTick();              // Tiempo actual en ms
-        uint32_t diff = now - lastTick;            // Tiempo desde el último pulso
-        if (diff > 0) {
-            // Calcula RPM: 60000 ms (un minuto) dividido por el periodo de una vuelta
-            rpm = 60000 / diff;  // rpm = 60*1000 / intervalo_en_ms :contentReference[oaicite:5]{index=5}
+        uint32_t now = HAL_GetTick();  // tiempo actual en ms
+        uint32_t diff = now - lastTick;
+
+        if (diff >= DIFF_MIN_MS && diff <= DIFF_MAX_MS) {
+            rpm = 60000 / diff;
+        } else {
+            rpm = 0; // fuera de rango o timeout
         }
         lastTick = now;
     }
@@ -118,27 +127,12 @@ int main(void)
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
 
-  // INICAMOS LA GENERACION DE PWM
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-//	  snprintf(msg, sizeof(msg), "RPM = %lu\r\n", rpm);
-//	  CDC_Transmit_FS((uint8_t*)msg, strlen(msg));
-//	  HAL_Delay(10);
-	  HAL_Delay(1000);
-	  PWM_SetDutyCycle(5);
-	  HAL_Delay(1000);
-	  PWM_SetDutyCycle(7.5);
-	  HAL_Delay(1000);
-	  PWM_SetDutyCycle(10);
-	  HAL_Delay(1000);
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
