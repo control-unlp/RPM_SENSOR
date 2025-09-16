@@ -1,0 +1,3 @@
+../Core/Src/phases_pwm.c:16:6:PWM_SetPulse_us	16	static
+../Core/Src/phases_pwm.c:29:6:Phases_Start	8	static
+../Core/Src/phases_pwm.c:36:6:Phases_Update	16	static
